@@ -1,6 +1,7 @@
 package eucl.tokengenerator.tokengeneratorapplication.models.entities;
 
-public enum UserRole {
-    ROLE_USER,
+public enum Role {
+    ROLE_CUSTOMER,
     ROLE_ADMIN,
 }
+

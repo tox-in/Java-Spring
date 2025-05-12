@@ -6,20 +6,24 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "meter_numbers")
-public class MeterNumber {
+@Table(name = "meters",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = "meterNumber")
+})
+public class Meter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    @Size(min = 6, max = 6)
-    @Pattern(regexp = "^[0-9a-zA-Z]{6}$")
-    @Column(name = "meter_number", unique = true)
+    @Size(min = 6, max = 6, message = "Meter should ne exactly 6 characters")
+    @Pattern(regexp = "^[0-9a-zA-Z]{6}$", message = "Meter number must be alphanumeric")
+    @Column(name = "meter_number", unique = true, nullable = false)
     private String meterNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,15 +31,15 @@ public class MeterNumber {
     private User user;
 
     @OneToMany(mappedBy = "meterNumber", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<PurchasedToken> tokens = new HashSet<>();
+    private List<PurchasedToken> purchasedTokens;
 
     @OneToMany(mappedBy = "meterNumber", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Notification> notifications = new HashSet<>();
 
-    public MeterNumber() {
+    public Meter() {
     }
 
-    public MeterNumber(String meterNumber, User user) {
+    public Meter(String meterNumber, User user) {
         this.meterNumber = meterNumber;
         this.user = user;
     }
@@ -64,19 +68,7 @@ public class MeterNumber {
         this.user = user;
     }
 
-    public Set<PurchasedToken> getTokens() {
-        return tokens;
-    }
+    public List<PurchasedToken> getPurchasedTokens() {return purchasedTokens;}
 
-    public void setTokens(Set<PurchasedToken> tokens) {
-        this.tokens = tokens;
-    }
-
-    public Set<Notification> getNotifications() {
-        return notifications;
-    }
-
-    public void setNotifications(Set<Notification> notifications) {
-        this.notifications = notifications;
-    }
+    public void setPurchasedTokens(List<PurchasedToken> purchasedTokens) {this.purchasedTokens = purchasedTokens;}
 }

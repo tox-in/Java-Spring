@@ -16,7 +16,7 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meter_number_id", nullable = false)
-    private MeterNumber meterNumber;
+    private Meter meterNumber;
 
     @NotBlank
     @Column(columnDefinition = "TEXT")
@@ -31,7 +31,7 @@ public class Notification {
 
     public Notification(){}
 
-    public Notification(MeterNumber meterNumber, String message, LocalDateTime issuedDate) {
+    public Notification(Meter meterNumber, String message, LocalDateTime issuedDate) {
         this.meterNumber = meterNumber;
         this.message = message;
         this.issuedDate = issuedDate;
@@ -46,11 +46,11 @@ public class Notification {
         this.id = id;
     }
 
-    public MeterNumber getMeterNumber() {
+    public Meter getMeterNumber() {
         return meterNumber;
     }
 
-    public void setMeterNumber(MeterNumber meterNumber) {
+    public void setMeterNumber(Meter meterNumber) {
         this.meterNumber = meterNumber;
     }
 

@@ -18,7 +18,7 @@ public class PurchasedToken {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meter_number_id", nullable = false)
-    private MeterNumber meterNumber;
+    private Meter meterNumber;
 
     @NotBlank
     @Size(min = 16, max = 16)
@@ -49,7 +49,7 @@ public class PurchasedToken {
 
     public PurchasedToken(){}
 
-    public PurchasedToken(MeterNumber meterNumber, String token, TokenStatus tokenStatus, Integer tokenValueDays, LocalDateTime purchasedDate, LocalDateTime expiryDate, BigDecimal amount) {
+    public PurchasedToken(Meter meterNumber, String token, TokenStatus tokenStatus, Integer tokenValueDays, LocalDateTime purchasedDate, LocalDateTime expiryDate, BigDecimal amount) {
         this.meterNumber = meterNumber;
         this.token = token;
         this.tokenStatus = tokenStatus;
@@ -67,11 +67,11 @@ public class PurchasedToken {
         this.id = id;
     }
 
-    public MeterNumber getMeterNumber() {
+    public Meter getMeterNumber() {
         return meterNumber;
     }
 
-    public void setMeterNumber(MeterNumber meterNumber) {
+    public void setMeterNumber(Meter meterNumber) {
         this.meterNumber = meterNumber;
     }
 
