@@ -11,7 +11,7 @@ public record SignupRequest(
         String name,
 
         @NotBlank(message = "Email is required")
-        @Size(max = 200, message = "Email can't exceed 100 characters")
+        @Size(max = 100, message = "Email can't exceed 100 characters")
         @Email(message = "Email should be valid")
         String email,
 
@@ -22,7 +22,7 @@ public record SignupRequest(
 
         @NotBlank(message = "National ID is required")
         @Size(min = 16, max = 16, message = "National ID must be 16 digits")
-        @Pattern(regexp = "^[0-9]+$", message = "National ID must contain only digits")
+        @Pattern(regexp = "^\\d{16}$", message = "National ID must be exactly 16 digits")
         String nationalId,
 
         @NotBlank(message = "Password is required")
