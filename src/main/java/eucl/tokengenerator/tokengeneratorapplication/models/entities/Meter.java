@@ -33,9 +33,6 @@ public class Meter {
     @OneToMany(mappedBy = "meterNumber", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PurchasedToken> purchasedTokens;
 
-    @OneToMany(mappedBy = "meterNumber", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Notification> notifications = new HashSet<>();
-
     public Meter() {
     }
 

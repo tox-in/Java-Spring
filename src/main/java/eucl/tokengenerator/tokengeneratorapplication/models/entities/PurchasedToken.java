@@ -1,10 +1,8 @@
 package eucl.tokengenerator.tokengeneratorapplication.models.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,6 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "purchased_tokens")
 public class PurchasedToken {
+    public enum TokenStatus {
+        NEW, USED, EXPIRED
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,35 +22,39 @@ public class PurchasedToken {
     private Meter meterNumber;
 
     @NotBlank
-    @Size(min = 16, max = 16)
-    @Pattern(regexp = "^[0-9]{16}$")
-    @Column(unique = true)
+    @Size(min = 16, max = 16, message = "Token must exactly be 16 digits")
+    @Pattern(regexp = "^[0-9]{16}$", message = "Token must contain only digits")
+    @Column(unique = true, nullable = false)
     private String token;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "token_status")
-    private TokenStatus tokenStatus;
+    @Column(nullable = false)
+    private TokenStatus tokenStatus = TokenStatus.NEW;
 
     @NotNull
-    @Column(name = "token_value_days")
+    @Column(name = "token_value_days", nullable = false)
+    @Min(value = 1, message = "Token must be worth at least one day")
     private Integer tokenValueDays;
 
-    @NotNull
-    @Column(name = "purchased_date")
+    @CreatedDate
+    @Column(name = "purchased_date", nullable = false)
     private LocalDateTime purchasedDate;
 
-    @NotNull
-    @Column(name = "expiry_date")
+    @Column(name = "expiry_date", nullable = false)
     private LocalDateTime expiryDate;
-
-    @NotNull
+    @NotNull(message = "Amount cannot be null")
+    @DecimalMin(value = "100.00", message = "Minimum purchase amount is 100 RWF")
     @Column(precision = 10, scale = 2)
     private BigDecimal amount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public PurchasedToken(){}
 
-    public PurchasedToken(Meter meterNumber, String token, TokenStatus tokenStatus, Integer tokenValueDays, LocalDateTime purchasedDate, LocalDateTime expiryDate, BigDecimal amount) {
+    public PurchasedToken(Meter meterNumber, String token, TokenStatus tokenStatus, Integer tokenValueDays, LocalDateTime purchasedDate, LocalDateTime expiryDate, BigDecimal amount, User user) {
         this.meterNumber = meterNumber;
         this.token = token;
         this.tokenStatus = tokenStatus;
@@ -57,6 +62,7 @@ public class PurchasedToken {
         this.purchasedDate = purchasedDate;
         this.expiryDate = expiryDate;
         this.amount = amount;
+        this.user = user;
     }
 
     public Long getId() {
@@ -123,10 +129,25 @@ public class PurchasedToken {
         this.amount = amount;
     }
 
+    @Transient
     public String getFormattedToken() {
         if (token == null || token.length() != 16) {
             return token;
         }
         return token.substring(0, 4) + "_" + token.substring(4, 8) + "_" + token.substring(8, 12) + "_" + token.substring(12, 16);
     }
+
+    @Override
+    public String toString() {
+        return "PurchasedToken{" +
+                "id=" + id +
+                ", token='" + token + '\'' +
+                ", tokenStatus=" + tokenStatus +
+                ", tokenValueDays=" + tokenValueDays +
+                ", purchasedDate=" + purchasedDate +
+                ", expiryDate=" + expiryDate +
+                ", amount=" + amount +
+                '}';
+    }
+
 }

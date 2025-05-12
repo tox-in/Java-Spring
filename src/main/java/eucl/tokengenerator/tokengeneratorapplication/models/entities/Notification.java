@@ -15,27 +15,30 @@ public class Notification {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meter_number_id", nullable = false)
+    @JoinColumn(name = "meter_number", nullable = false)
     private Meter meterNumber;
 
     @NotBlank
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String message;
 
     @NotNull
-    @Column(name = "issued_date")
-    private LocalDateTime issuedDate;
+    @Column(name = "issued_date", nullable = false)
+    private LocalDateTime issuedDate = LocalDateTime.now();
 
-    @Column(name = "sent")
-    private boolean sent;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false)
+    private boolean emailSent = false;
 
     public Notification(){}
 
-    public Notification(Meter meterNumber, String message, LocalDateTime issuedDate) {
+    public Notification(Meter meterNumber, String message, User user) {
         this.meterNumber = meterNumber;
         this.message = message;
-        this.issuedDate = issuedDate;
-        this.sent = false;
+        this.user = user;
     }
 
     public Long getId() {
@@ -70,11 +73,17 @@ public class Notification {
         this.issuedDate = issuedDate;
     }
 
-    public boolean isSent() {
-        return sent;
+    public User getUser() {
+        return user;
     }
 
-    public void setSent(boolean sent) {
-        this.sent = sent;
+    public void setUser(User user) {
+        this.user = user;
     }
+
+    public boolean isEmailSent() {
+        return emailSent;
+    }
+
+    public void setEmailSent(boolean emailSent) { this.emailSent = emailSent;}
 }
